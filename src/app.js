@@ -6,6 +6,9 @@ const sessionMiddleware = require('./config/session');
 const { csrfSynchronisedProtection, generateToken } = require('./config/csrf');
 const authRoutes = require('./routes/web/authRoutes');
 
+const apiAuthRoutes = require('./routes/api/authRoutes');
+const apiRecordRoutes = require('./routes/api/recordRoutes');
+
 const app = express();
 
 app.set('view engine', 'hbs');
@@ -23,5 +26,9 @@ app.use((req, res, next) => {
 });
 
 app.use('/', authRoutes);
+
+// ── P3: Add these two lines ──
+app.use('/api/auth', apiAuthRoutes);
+app.use('/api/records', apiRecordRoutes);
 
 module.exports = app;
