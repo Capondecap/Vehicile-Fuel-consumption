@@ -9,10 +9,16 @@ const recordController = {
       dateFormatted: formatDate(r.date),
       efficiency: r.efficiency.toFixed(2),
     }));
+    const totalLiters = records.reduce((s, r) => s + r.liters, 0).toFixed(2);
+    const totalDistance = records.reduce((s, r) => s + r.distanceKm, 0).toFixed(1);
+    const totalCost = records.reduce((s, r) => s + r.totalCost, 0).toFixed(2);
     res.render('dashboard/index', {
       records,
       username: req.session.username,
       hasRecords: records.length > 0,
+      totalLiters,
+      totalDistance,
+      totalCost,
     });
   },
 

@@ -5,55 +5,380 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{{#if title}}{{title}} — {{/if}}Fuel Tracker</title>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: Arial, sans-serif; max-width: 960px; margin: 0 auto; padding: 16px; color: #222; }
-    nav { display: flex; align-items: center; gap: 16px; padding: 10px 0 14px; border-bottom: 2px solid #333; margin-bottom: 24px; }
-    nav .brand { font-weight: bold; font-size: 1.1em; text-decoration: none; color: #333; }
-    nav a { text-decoration: none; color: #555; }
-    nav a:hover { text-decoration: underline; }
-    nav .spacer { flex: 1; }
-    nav .user { font-size: 0.9em; color: #666; }
-    nav form { display: inline; }
-    nav button { background: none; border: 1px solid #c00; color: #c00; padding: 4px 10px; cursor: pointer; border-radius: 3px; }
-    nav button:hover { background: #c00; color: #fff; }
-    h2 { margin-bottom: 16px; }
-    table { width: 100%; border-collapse: collapse; margin-top: 12px; }
-    th, td { border: 1px solid #ddd; padding: 8px 12px; text-align: left; }
-    th { background: #f4f4f4; font-weight: bold; }
-    tr:hover td { background: #fafafa; }
-    .error { color: #c00; background: #fee; border: 1px solid #fcc; padding: 8px 12px; border-radius: 3px; margin-bottom: 14px; }
-    form div { margin-bottom: 14px; }
-    label { display: block; margin-bottom: 4px; font-weight: bold; font-size: 0.95em; }
-    input[type=text], input[type=password], input[type=date], input[type=number], select {
-      padding: 7px 10px; width: 100%; max-width: 320px; border: 1px solid #ccc; border-radius: 3px; font-size: 1em;
+    :root {
+      --bg: #f0f4f8;
+      --surface: #ffffff;
+      --border: #e2e8f0;
+      --text: #1a202c;
+      --text-muted: #718096;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --success: #16a34a;
+      --success-hover: #15803d;
+      --danger: #dc2626;
+      --danger-hover: #b91c1c;
+      --shadow: 0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.06);
+      --shadow-md: 0 4px 6px rgba(0,0,0,.07), 0 2px 4px rgba(0,0,0,.06);
+      --radius: 8px;
     }
-    button[type=submit], .btn { padding: 8px 18px; background: #333; color: #fff; border: none; cursor: pointer; border-radius: 3px; text-decoration: none; font-size: 0.95em; }
-    button[type=submit]:hover, .btn:hover { background: #555; }
-    .btn-danger { background: #c00; }
-    .btn-danger:hover { background: #900; }
-    .actions { display: flex; gap: 8px; align-items: center; }
-    .mt { margin-top: 16px; }
-    .container { max-width: 460px; }
-    p.note { margin-top: 14px; font-size: 0.9em; color: #555; }
-    a.add-link { display: inline-block; margin-bottom: 14px; padding: 7px 16px; background: #2a7; color: #fff; text-decoration: none; border-radius: 3px; }
-    a.add-link:hover { background: #1a6; }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ── Nav ── */
+    nav {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 24px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 700;
+      font-size: 1.15rem;
+      color: var(--primary);
+      text-decoration: none;
+      letter-spacing: -.3px;
+    }
+    .brand svg { flex-shrink: 0; }
+    .nav-links { display: flex; gap: 4px; }
+    .nav-links a {
+      padding: 6px 12px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-size: .9rem;
+      color: var(--text-muted);
+      font-weight: 500;
+      transition: background .15s, color .15s;
+    }
+    .nav-links a:hover { background: var(--bg); color: var(--text); }
+    .nav-spacer { flex: 1; }
+    .nav-user {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .nav-username {
+      font-size: .875rem;
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+    .nav-user form { display: inline; }
+    .btn-logout {
+      padding: 6px 14px;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      border-radius: 6px;
+      font-size: .875rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: border-color .15s, color .15s, background .15s;
+    }
+    .btn-logout:hover {
+      border-color: var(--danger);
+      color: var(--danger);
+      background: #fff5f5;
+    }
+
+    /* ── Page wrapper ── */
+    .page {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 32px 24px 64px;
+    }
+
+    /* ── Auth wrapper ── */
+    .auth-page {
+      min-height: calc(100vh - 61px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 16px;
+    }
+    .auth-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-md);
+      padding: 40px;
+      width: 100%;
+      max-width: 420px;
+    }
+    .auth-card h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .auth-subtitle {
+      font-size: .9rem;
+      color: var(--text-muted);
+      margin-bottom: 28px;
+    }
+
+    /* ── Card ── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 28px;
+    }
+
+    /* ── Page header ── */
+    .page-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .page-header h2 {
+      font-size: 1.35rem;
+      font-weight: 700;
+    }
+
+    /* ── Stats row ── */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px 22px;
+      box-shadow: var(--shadow);
+    }
+    .stat-label {
+      font-size: .78rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+    .stat-value {
+      font-size: 1.45rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    /* ── Table ── */
+    .table-wrap { overflow-x: auto; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: .9rem;
+    }
+    thead th {
+      background: var(--bg);
+      padding: 11px 16px;
+      text-align: left;
+      font-size: .75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+    tbody td {
+      padding: 13px 16px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+      vertical-align: middle;
+    }
+    tbody tr:last-child td { border-bottom: none; }
+    tbody tr:hover td { background: #f8fafc; }
+
+    /* ── Badges ── */
+    .badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 9999px;
+      font-size: .75rem;
+      font-weight: 600;
+    }
+    .badge-car { background: #eff6ff; color: #1d4ed8; }
+    .badge-moto { background: #f0fdf4; color: #15803d; }
+
+    /* ── Action buttons in table ── */
+    .actions { display: flex; gap: 6px; align-items: center; }
+    .btn-sm {
+      padding: 5px 12px;
+      border-radius: 5px;
+      font-size: .8rem;
+      font-weight: 500;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      border: 1px solid transparent;
+      transition: background .15s, color .15s, border-color .15s;
+    }
+    .btn-edit {
+      background: #eff6ff;
+      color: var(--primary);
+      border-color: #bfdbfe;
+    }
+    .btn-edit:hover { background: #dbeafe; }
+    .btn-del {
+      background: #fff5f5;
+      color: var(--danger);
+      border-color: #fecaca;
+    }
+    .btn-del:hover { background: #fee2e2; }
+
+    /* ── Forms ── */
+    .form-group { margin-bottom: 18px; }
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-size: .875rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+    input[type=text], input[type=password], input[type=date],
+    input[type=number], select {
+      width: 100%;
+      padding: 9px 13px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: .95rem;
+      color: var(--text);
+      background: var(--surface);
+      transition: border-color .15s, box-shadow .15s;
+      outline: none;
+    }
+    input:focus, select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(37,99,235,.12);
+    }
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0 20px;
+    }
+
+    /* ── Buttons ── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 9px 20px;
+      border-radius: 6px;
+      font-size: .9rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      border: none;
+      transition: background .15s, box-shadow .15s;
+    }
+    .btn-primary { background: var(--primary); color: #fff; }
+    .btn-primary:hover { background: var(--primary-hover); box-shadow: var(--shadow-md); }
+    .btn-success { background: var(--success); color: #fff; }
+    .btn-success:hover { background: var(--success-hover); box-shadow: var(--shadow-md); }
+    .btn-ghost {
+      background: transparent;
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+    }
+    .btn-ghost:hover { background: var(--bg); color: var(--text); }
+    .form-actions { display: flex; gap: 10px; align-items: center; margin-top: 8px; }
+
+    /* ── Alert ── */
+    .alert {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 12px 16px;
+      border-radius: 6px;
+      margin-bottom: 20px;
+      font-size: .9rem;
+    }
+    .alert-error { background: #fef2f2; border: 1px solid #fecaca; color: #b91c1c; }
+
+    /* ── Empty state ── */
+    .empty-state {
+      text-align: center;
+      padding: 56px 20px;
+      color: var(--text-muted);
+    }
+    .empty-state svg { margin-bottom: 16px; opacity: .35; }
+    .empty-state p { margin-bottom: 20px; font-size: .95rem; }
+
+    /* ── Note ── */
+    p.note { margin-top: 20px; font-size: .875rem; color: var(--text-muted); text-align: center; }
+    p.note a { color: var(--primary); text-decoration: none; font-weight: 500; }
+    p.note a:hover { text-decoration: underline; }
+
+    @media (max-width: 600px) {
+      .form-grid { grid-template-columns: 1fr; }
+      .auth-card { padding: 28px 20px; }
+      .page { padding: 20px 16px 48px; }
+    }
   </style>
 </head>
 <body>
   {{#if username}}
   <nav>
-    <a class="brand" href="/records">Fuel Tracker</a>
-    <a href="/records">Records</a>
-    <span class="spacer"></span>
-    <span class="user">{{username}}</span>
-    <form method="POST" action="/logout">
-      <input type="hidden" name="_csrf" value="{{csrfToken}}">
-      <button type="submit">Logout</button>
-    </form>
+    <div class="nav-inner">
+      <a class="brand" href="/records">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 10h2l2-7h10l2 7h2a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1"/>
+          <circle cx="7.5" cy="17.5" r="2.5"/>
+          <circle cx="16.5" cy="17.5" r="2.5"/>
+          <path d="M7.5 15H5v-4"/>
+        </svg>
+        Fuel Tracker
+      </a>
+      <div class="nav-links">
+        <a href="/records">Records</a>
+      </div>
+      <div class="nav-spacer"></div>
+      <div class="nav-user">
+        <span class="nav-username">{{username}}</span>
+        <form method="POST" action="/logout">
+          <input type="hidden" name="_csrf" value="{{csrfToken}}">
+          <button type="submit" class="btn-logout">Logout</button>
+        </form>
+      </div>
+    </div>
   </nav>
   {{else}}
   <nav>
-    <a class="brand" href="/login">Fuel Tracker</a>
+    <div class="nav-inner">
+      <a class="brand" href="/login">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 10h2l2-7h10l2 7h2a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1"/>
+          <circle cx="7.5" cy="17.5" r="2.5"/>
+          <circle cx="16.5" cy="17.5" r="2.5"/>
+        </svg>
+        Fuel Tracker
+      </a>
+    </div>
   </nav>
   {{/if}}
 

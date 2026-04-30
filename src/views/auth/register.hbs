@@ -1,30 +1,36 @@
-<div class="container">
-  <h2>Register</h2>
+<div class="auth-page">
+  <div class="auth-card">
+    <h2>Create account</h2>
+    <p class="auth-subtitle">Start tracking your vehicle fuel consumption</p>
 
-  {{#if error}}
-  <p class="error">{{error}}</p>
-  {{/if}}
-
-  <form method="POST" action="/register">
-    <input type="hidden" name="_csrf" value="{{csrfToken}}">
-
-    <div>
-      <label for="username">Username</label>
-      <input type="text" id="username" name="username" required autofocus>
+    {{#if error}}
+    <div class="alert alert-error">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:1px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      {{error}}
     </div>
+    {{/if}}
 
-    <div>
-      <label for="password">Password</label>
-      <input type="password" id="password" name="password" required>
-    </div>
+    <form method="POST" action="/register">
+      <input type="hidden" name="_csrf" value="{{csrfToken}}">
 
-    <div>
-      <label for="confirmPassword">Confirm Password</label>
-      <input type="password" id="confirmPassword" name="confirmPassword" required>
-    </div>
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username" placeholder="Choose a username" required autofocus>
+      </div>
 
-    <button type="submit">Register</button>
-  </form>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" placeholder="Create a password" required>
+      </div>
 
-  <p class="note">Already have an account? <a href="/login">Login here</a></p>
+      <div class="form-group">
+        <label for="confirmPassword">Confirm Password</label>
+        <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Repeat your password" required>
+      </div>
+
+      <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;">Create account</button>
+    </form>
+
+    <p class="note">Already have an account? <a href="/login">Sign in</a></p>
+  </div>
 </div>
