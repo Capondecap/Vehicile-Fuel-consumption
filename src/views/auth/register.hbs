@@ -1,0 +1,30 @@
+<div class="container">
+  <h2>Register</h2>
+
+  {{#if error}}
+  <p class="error">{{error}}</p>
+  {{/if}}
+
+  <form method="POST" action="/register">
+    <input type="hidden" name="_csrf" value="{{csrfToken}}">
+
+    <div>
+      <label for="username">Username</label>
+      <input type="text" id="username" name="username" required autofocus>
+    </div>
+
+    <div>
+      <label for="password">Password</label>
+      <input type="password" id="password" name="password" required>
+    </div>
+
+    <div>
+      <label for="confirmPassword">Confirm Password</label>
+      <input type="password" id="confirmPassword" name="confirmPassword" required>
+    </div>
+
+    <button type="submit">Register</button>
+  </form>
+
+  <p class="note">Already have an account? <a href="/login">Login here</a></p>
+</div>
