@@ -13,30 +13,7 @@
  * mock below so P3 can run independently.
  */
 
-// ---------------------------------------------------------------------------
-// Model import — swap comment when P2 merges their model
-// ---------------------------------------------------------------------------
-let FuelRecord;
-try {
-  FuelRecord = require('../models/FuelRecord'); // P2's real model
-} catch {
-  // ── MOCK (remove after P2 merges) ─────────────────────────────────────────
-  FuelRecord = {
-    findAll: async ({ where }) => {
-      const all = [
-        { id: 1, userId: where.userId, date: '2025-06-02', vehicleType: 'Car',        liters: 40, distanceKm: 480, totalCost: 2800 },
-        { id: 2, userId: where.userId, date: '2025-06-09', vehicleType: 'Motorcycle', liters: 10, distanceKm: 180, totalCost:  700 },
-        { id: 3, userId: where.userId, date: '2025-06-16', vehicleType: 'Car',        liters: 35, distanceKm: 420, totalCost: 2450 },
-        { id: 4, userId: where.userId, date: '2025-06-23', vehicleType: 'Car',        liters: 42, distanceKm: 504, totalCost: 2940 },
-        { id: 5, userId: where.userId, date: '2025-07-07', vehicleType: 'Motorcycle', liters:  8, distanceKm: 160, totalCost:  560 },
-        { id: 6, userId: where.userId, date: '2025-07-14', vehicleType: 'Car',        liters: 50, distanceKm: 600, totalCost: 3500 },
-        { id: 7, userId: where.userId, date: '2025-07-21', vehicleType: 'Car',        liters: 38, distanceKm: 456, totalCost: 2660 },
-      ];
-      return all;
-    },
-  };
-  // ──────────────────────────────────────────────────────────────────────────
-}
+const FuelRecord = require('../models/FuelRecord');
 
 const { getISOWeekLabel, getMonthLabel, formatMonthLabel } = require('../utils/dateUtils');
 
@@ -84,7 +61,7 @@ function finaliseBucket(bucket) {
  * ]
  */
 async function aggregateByWeek(userId) {
-  const records = await FuelRecord.findAll({ where: { userId } });
+  const records = FuelRecord.getAll(userId);
   const map = {};
 
   for (const r of records) {
@@ -112,7 +89,7 @@ async function aggregateByWeek(userId) {
  * ]
  */
 async function aggregateByMonth(userId) {
-  const records = await FuelRecord.findAll({ where: { userId } });
+  const records = FuelRecord.getAll(userId);
   const map = {};
 
   for (const r of records) {
@@ -147,12 +124,53 @@ async function computeSummary(userId) {
 // ── Person 3 functions end here ────────────────────────────────────────────
 // ---------------------------------------------------------------------------
 
+// ---------------------------------------------------------------------------
+// CRUD functions
+// ---------------------------------------------------------------------------
+
+function getAllRecords(userId) {
+  return FuelRecord.getAll(userId);
+}
+
+function createRecord(userId, data) {
+  const { date, vehicleType, liters, distanceKm, totalCost } = data;
+  if (!date || !vehicleType || !liters || !distanceKm || !totalCost) {
+    return { error: 'All fields are required.' };
+  }
+  if (!['Car', 'Motorcycle'].includes(vehicleType)) {
+    return { error: 'Vehicle type must be Car or Motorcycle.' };
+  }
+  const record = FuelRecord.create({ userId, date, vehicleType, liters, distanceKm, totalCost });
+  return { record };
+}
+
+function getRecord(id) {
+  return FuelRecord.getById(id);
+}
+
+function updateRecord(id, data) {
+  const { date, vehicleType, liters, distanceKm, totalCost } = data;
+  if (!date || !vehicleType || !liters || !distanceKm || !totalCost) {
+    return { error: 'All fields are required.' };
+  }
+  if (!['Car', 'Motorcycle'].includes(vehicleType)) {
+    return { error: 'Vehicle type must be Car or Motorcycle.' };
+  }
+  const record = FuelRecord.update(id, data);
+  return { record };
+}
+
+function deleteRecord(id) {
+  return FuelRecord.delete(id);
+}
+
 module.exports = {
-  // P3 exports — do NOT remove
   aggregateByWeek,
   aggregateByMonth,
   computeSummary,
-
-  // P2 will add their exports here when they merge:
-  // createRecord, getRecordById, getRecordsByUser, updateRecord, deleteRecord
+  getAllRecords,
+  createRecord,
+  getRecord,
+  updateRecord,
+  deleteRecord,
 };

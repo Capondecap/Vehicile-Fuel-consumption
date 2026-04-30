@@ -17,7 +17,7 @@ const recordController = {
   },
 
   getCreate(req, res) {
-    res.render('records/create');
+    res.render('records/create', { input: {} });
   },
 
   postCreate(req, res) {

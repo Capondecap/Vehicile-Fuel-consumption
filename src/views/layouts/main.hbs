@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{#if title}}{{title}} — {{/if}}Fuel Tracker</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Arial, sans-serif; max-width: 960px; margin: 0 auto; padding: 16px; color: #222; }
+    nav { display: flex; align-items: center; gap: 16px; padding: 10px 0 14px; border-bottom: 2px solid #333; margin-bottom: 24px; }
+    nav .brand { font-weight: bold; font-size: 1.1em; text-decoration: none; color: #333; }
+    nav a { text-decoration: none; color: #555; }
+    nav a:hover { text-decoration: underline; }
+    nav .spacer { flex: 1; }
+    nav .user { font-size: 0.9em; color: #666; }
+    nav form { display: inline; }
+    nav button { background: none; border: 1px solid #c00; color: #c00; padding: 4px 10px; cursor: pointer; border-radius: 3px; }
+    nav button:hover { background: #c00; color: #fff; }
+    h2 { margin-bottom: 16px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+    th, td { border: 1px solid #ddd; padding: 8px 12px; text-align: left; }
+    th { background: #f4f4f4; font-weight: bold; }
+    tr:hover td { background: #fafafa; }
+    .error { color: #c00; background: #fee; border: 1px solid #fcc; padding: 8px 12px; border-radius: 3px; margin-bottom: 14px; }
+    form div { margin-bottom: 14px; }
+    label { display: block; margin-bottom: 4px; font-weight: bold; font-size: 0.95em; }
+    input[type=text], input[type=password], input[type=date], input[type=number], select {
+      padding: 7px 10px; width: 100%; max-width: 320px; border: 1px solid #ccc; border-radius: 3px; font-size: 1em;
+    }
+    button[type=submit], .btn { padding: 8px 18px; background: #333; color: #fff; border: none; cursor: pointer; border-radius: 3px; text-decoration: none; font-size: 0.95em; }
+    button[type=submit]:hover, .btn:hover { background: #555; }
+    .btn-danger { background: #c00; }
+    .btn-danger:hover { background: #900; }
+    .actions { display: flex; gap: 8px; align-items: center; }
+    .mt { margin-top: 16px; }
+    .container { max-width: 460px; }
+    p.note { margin-top: 14px; font-size: 0.9em; color: #555; }
+    a.add-link { display: inline-block; margin-bottom: 14px; padding: 7px 16px; background: #2a7; color: #fff; text-decoration: none; border-radius: 3px; }
+    a.add-link:hover { background: #1a6; }
+  </style>
+</head>
+<body>
+  {{#if username}}
+  <nav>
+    <a class="brand" href="/records">Fuel Tracker</a>
+    <a href="/records">Records</a>
+    <span class="spacer"></span>
+    <span class="user">{{username}}</span>
+    <form method="POST" action="/logout">
+      <input type="hidden" name="_csrf" value="{{csrfToken}}">
+      <button type="submit">Logout</button>
+    </form>
+  </nav>
+  {{else}}
+  <nav>
+    <a class="brand" href="/login">Fuel Tracker</a>
+  </nav>
+  {{/if}}
+
+  {{{body}}}
+</body>
+</html>

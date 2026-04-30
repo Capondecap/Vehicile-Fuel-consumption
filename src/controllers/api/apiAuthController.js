@@ -11,25 +11,7 @@
 
 const jwt = require('jsonwebtoken');
 
-// ---------------------------------------------------------------------------
-// User service import — P1 owns this. Mock fallback while working solo.
-// ---------------------------------------------------------------------------
-let userService;
-try {
-  userService = require('../../services/userService'); // P1's service
-} catch {
-  // ── MOCK (remove after P1 merges) ─────────────────────────────────────────
-  userService = {
-    findByUsername: async (username) => {
-      if (username === 'admin') {
-        return { id: 1, username: 'admin', password: 'password123' };
-      }
-      return null;
-    },
-    verifyPassword: async (plaintext, stored) => plaintext === stored,
-  };
-  // ──────────────────────────────────────────────────────────────────────────
-}
+const userService = require('../../services/userService');
 
 // ---------------------------------------------------------------------------
 // POST /api/auth/login

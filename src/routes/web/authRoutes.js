@@ -20,12 +20,6 @@ router.post('/login', csrfSynchronisedProtection, postLogin);
 
 router.post('/logout', csrfSynchronisedProtection, postLogout);
 
-// Dashboard route — protected; view + CRUD wired by Person 2
-router.get('/dashboard', requireAuth, (req, res) => {
-  res.render('dashboard/index', {
-    title: 'Dashboard',
-    username: req.session.username,
-  });
-});
+router.get('/dashboard', requireAuth, (req, res) => res.redirect('/records'));
 
 module.exports = router;

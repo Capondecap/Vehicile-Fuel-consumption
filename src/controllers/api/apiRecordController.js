@@ -12,27 +12,7 @@
 
 const { computeSummary, aggregateByWeek, aggregateByMonth } = require('../../services/fuelService');
 
-// ---------------------------------------------------------------------------
-// FuelRecord model — P2 owns this. Mock fallback for solo development.
-// ---------------------------------------------------------------------------
-let FuelRecord;
-try {
-  FuelRecord = require('../../models/FuelRecord');
-} catch {
-  // ── MOCK (remove after P2 merges) ─────────────────────────────────────────
-  FuelRecord = {
-    findAll: async ({ where }) => [
-      { id: 1, userId: where.userId, date: '2025-06-02', vehicleType: 'Car',        liters: 40, distanceKm: 480, totalCost: 2800 },
-      { id: 2, userId: where.userId, date: '2025-06-09', vehicleType: 'Motorcycle', liters: 10, distanceKm: 180, totalCost:  700 },
-      { id: 3, userId: where.userId, date: '2025-06-16', vehicleType: 'Car',        liters: 35, distanceKm: 420, totalCost: 2450 },
-      { id: 4, userId: where.userId, date: '2025-06-23', vehicleType: 'Car',        liters: 42, distanceKm: 504, totalCost: 2940 },
-      { id: 5, userId: where.userId, date: '2025-07-07', vehicleType: 'Motorcycle', liters:  8, distanceKm: 160, totalCost:  560 },
-      { id: 6, userId: where.userId, date: '2025-07-14', vehicleType: 'Car',        liters: 50, distanceKm: 600, totalCost: 3500 },
-      { id: 7, userId: where.userId, date: '2025-07-21', vehicleType: 'Car',        liters: 38, distanceKm: 456, totalCost: 2660 },
-    ],
-  };
-  // ──────────────────────────────────────────────────────────────────────────
-}
+const FuelRecord = require('../../models/FuelRecord');
 
 // ---------------------------------------------------------------------------
 // GET /api/records
@@ -43,7 +23,7 @@ async function getRecords(req, res, next) {
   try {
     const userId = req.user.id; // set by jwtMiddleware
 
-    const rows = await FuelRecord.findAll({ where: { userId } });
+    const rows = FuelRecord.getAll(userId);
 
     // Attach km/L efficiency to every record in the response
     const records = rows.map((r) => ({
