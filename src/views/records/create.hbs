@@ -1,0 +1,44 @@
+<!-- Form to create a new fuel record -->
+<div class="container">
+  <h2>Add Fuel Record</h2>
+
+  {{#if error}}
+    <p class="error">{{error}}</p>
+  {{/if}}
+
+  <form method="POST" action="/records/create">
+    <input type="hidden" name="_csrf" value="{{csrfToken}}">
+
+    <div>
+      <label for="date">Date</label>
+      <input type="date" id="date" name="date" value="{{input.date}}" required>
+    </div>
+
+    <div>
+      <label for="vehicleType">Vehicle Type</label>
+      <select id="vehicleType" name="vehicleType" required>
+        <option value="">-- Select --</option>
+        <option value="Car" {{#if (eq input.vehicleType "Car")}}selected{{/if}}>Car</option>
+        <option value="Motorcycle" {{#if (eq input.vehicleType "Motorcycle")}}selected{{/if}}>Motorcycle</option>
+      </select>
+    </div>
+
+    <div>
+      <label for="liters">Liters</label>
+      <input type="number" id="liters" name="liters" step="0.01" min="0.01" value="{{input.liters}}" required>
+    </div>
+
+    <div>
+      <label for="distanceKm">Distance (km)</label>
+      <input type="number" id="distanceKm" name="distanceKm" step="0.01" min="0.01" value="{{input.distanceKm}}" required>
+    </div>
+
+    <div>
+      <label for="totalCost">Total Cost</label>
+      <input type="number" id="totalCost" name="totalCost" step="0.01" min="0.01" value="{{input.totalCost}}" required>
+    </div>
+
+    <button type="submit">Save Record</button>
+    <a href="/records">Cancel</a>
+  </form>
+</div>
