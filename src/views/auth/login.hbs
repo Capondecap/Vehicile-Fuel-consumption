@@ -1,25 +1,31 @@
-<div class="container">
-  <h2>Login</h2>
+<div class="auth-page">
+  <div class="auth-card">
+    <h2>Welcome back</h2>
+    <p class="auth-subtitle">Sign in to your Fuel Tracker account</p>
 
-  {{#if error}}
-  <p class="error">{{error}}</p>
-  {{/if}}
-
-  <form method="POST" action="/login">
-    <input type="hidden" name="_csrf" value="{{csrfToken}}">
-
-    <div>
-      <label for="username">Username</label>
-      <input type="text" id="username" name="username" required autofocus>
+    {{#if error}}
+    <div class="alert alert-error">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:1px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      {{error}}
     </div>
+    {{/if}}
 
-    <div>
-      <label for="password">Password</label>
-      <input type="password" id="password" name="password" required>
-    </div>
+    <form method="POST" action="/login">
+      <input type="hidden" name="_csrf" value="{{csrfToken}}">
 
-    <button type="submit">Login</button>
-  </form>
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username" placeholder="Enter your username" required autofocus>
+      </div>
 
-  <p class="note">Don't have an account? <a href="/register">Register here</a></p>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" placeholder="Enter your password" required>
+      </div>
+
+      <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;">Sign in</button>
+    </form>
+
+    <p class="note">Don't have an account? <a href="/register">Create one</a></p>
+  </div>
 </div>

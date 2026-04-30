@@ -1,42 +1,87 @@
-<!-- Dashboard view displaying all fuel records for the logged-in user -->
-<div class="container">
-  <h2>Welcome, {{username}}</h2>
-  <a href="/records/create">+ Add Record</a>
+<div class="page">
+  <div class="page-header">
+    <h2>Fuel Records</h2>
+    <a href="/records/create" class="btn btn-success">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Add Record
+    </a>
+  </div>
 
   {{#if hasRecords}}
-    <table>
-      <thead>
-        <tr>
-          <th>Date</th>
-          <th>Vehicle Type</th>
-          <th>Liters</th>
-          <th>Distance (km)</th>
-          <th>Efficiency (km/L)</th>
-          <th>Total Cost</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        {{#each records}}
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-label">Total Records</div>
+      <div class="stat-value">{{records.length}}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Total Liters</div>
+      <div class="stat-value">{{totalLiters}} L</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Total Distance</div>
+      <div class="stat-value">{{totalDistance}} km</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Total Spent</div>
+      <div class="stat-value">${{totalCost}}</div>
+    </div>
+  </div>
+  {{/if}}
+
+  <div class="card" style="padding:0; overflow:hidden;">
+    {{#if hasRecords}}
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Vehicle</th>
+            <th>Liters</th>
+            <th>Distance</th>
+            <th>Efficiency</th>
+            <th>Cost</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each records}}
           <tr>
             <td>{{this.dateFormatted}}</td>
-            <td>{{this.vehicleType}}</td>
-            <td>{{this.liters}}</td>
-            <td>{{this.distanceKm}}</td>
-            <td>{{this.efficiency}}</td>
-            <td>{{this.totalCost}}</td>
             <td>
-              <a href="/records/{{this.id}}/edit">Edit</a>
-              <form method="POST" action="/records/{{this.id}}/delete" style="display:inline;">
-                <input type="hidden" name="_csrf" value="{{../csrfToken}}">
-                <button type="submit" onclick="return confirm('Delete this record?')">Delete</button>
-              </form>
+              {{#if (eq this.vehicleType "Car")}}
+                <span class="badge badge-car">Car</span>
+              {{else}}
+                <span class="badge badge-moto">Motorcycle</span>
+              {{/if}}
+            </td>
+            <td>{{this.liters}} L</td>
+            <td>{{this.distanceKm}} km</td>
+            <td>{{this.efficiency}} km/L</td>
+            <td>${{this.totalCost}}</td>
+            <td>
+              <div class="actions">
+                <a href="/records/{{this.id}}/edit" class="btn-sm btn-edit">Edit</a>
+                <form method="POST" action="/records/{{this.id}}/delete" style="display:inline;">
+                  <input type="hidden" name="_csrf" value="{{../csrfToken}}">
+                  <button type="submit" class="btn-sm btn-del" onclick="return confirm('Delete this record?')">Delete</button>
+                </form>
+              </div>
             </td>
           </tr>
-        {{/each}}
-      </tbody>
-    </table>
-  {{else}}
-    <p>No records yet. Add your first fuel record above.</p>
-  {{/if}}
+          {{/each}}
+        </tbody>
+      </table>
+    </div>
+    {{else}}
+    <div class="empty-state">
+      <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 10h2l2-7h10l2 7h2a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1"/>
+        <circle cx="7.5" cy="17.5" r="2.5"/>
+        <circle cx="16.5" cy="17.5" r="2.5"/>
+      </svg>
+      <p>No fuel records yet.</p>
+      <a href="/records/create" class="btn btn-success">Add your first record</a>
+    </div>
+    {{/if}}
+  </div>
 </div>
